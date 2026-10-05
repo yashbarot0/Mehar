@@ -72,20 +72,22 @@
 
   function showSlide(i) {
     lbIdx = (i + lbSet.length) % lbSet.length;
+    var title = Array.isArray(lbTitle) ? lbTitle[lbIdx] : lbTitle;
     lbImg.src = lbSet[lbIdx];
-    lbImg.alt = lbTitle + " photo " + (lbIdx + 1);
-    lbCap.textContent = lbTitle + (lbSet.length > 1 ? "  ·  " + (lbIdx + 1) + " / " + lbSet.length : "");
+    lbImg.alt = title + " photo " + (lbIdx + 1);
+    lbCap.textContent = title + (lbSet.length > 1 ? "  ·  " + (lbIdx + 1) + " / " + lbSet.length : "");
     var multi = lbSet.length > 1;
     lb.querySelector(".lb-prev").hidden = !multi;
     lb.querySelector(".lb-next").hidden = !multi;
   }
 
-  function openLightbox(images, title) {
+  // title may be a single string or one caption per image
+  function openLightbox(images, title, start) {
     if (!images || !images.length) return;
     if (!lb) buildLightbox();
     lbSet = images;
     lbTitle = title;
-    showSlide(0);
+    showSlide(start || 0);
     lb.hidden = false;
     document.body.style.overflow = "hidden";
   }
@@ -96,13 +98,20 @@
   }
 
   /* ---------- Cards ---------- */
+  // Small copy of a photo for cards and gallery tiles: /a/b/01.jpg -> /a/b/thumbs/01.jpg
+  function thumb(src) {
+    return src.replace(/([^/]+)$/, "thumbs/$1");
+  }
+
   function media(item) {
     var imgs = item.images || [];
     var cover = imgs.length
-      ? '<img src="' + esc(imgs[0]) + '" alt="' + esc(item.title) + '" loading="lazy">'
+      ? '<img src="' + esc(thumb(imgs[0])) + '" alt="' + esc(item.title) + '" loading="lazy">'
       : '<div class="placeholder">' + ICONS.building + "</div>";
     var count = imgs.length > 1 ? '<span class="count">' + ICONS.photos + imgs.length + "</span>" : "";
-    var badge = '<span class="badge ' + esc(item.status) + '">' + esc(STATUS_LABEL[item.status] || item.status) + "</span>";
+    var badge = item.status
+      ? '<span class="badge ' + esc(item.status) + '">' + esc(STATUS_LABEL[item.status] || item.status) + "</span>"
+      : "";
     return '<button class="project-media" type="button" aria-label="View photos of ' + esc(item.title) + '">' + cover + badge + count + "</button>";
   }
 
@@ -188,6 +197,23 @@
 
   var venturesEl = document.getElementById("ventures-grid");
   if (venturesEl) render(venturesEl, data.ventures || [], ventureCard, EMPTY_VENTURES);
+
+  /* ---------- Gallery: every project photo ---------- */
+  var galleryEl = document.getElementById("gallery-grid");
+  if (galleryEl) {
+    var gSrc = [], gCap = [];
+    (data.projects || []).forEach(function (p) {
+      (p.images || []).forEach(function (src) { gSrc.push(src); gCap.push(p.title); });
+    });
+    galleryEl.innerHTML = gSrc.map(function (src, i) {
+      return '<button class="gallery-item" type="button" data-i="' + i + '" aria-label="Open photo: ' + esc(gCap[i]) + '">' +
+        '<img src="' + esc(thumb(src)) + '" alt="' + esc(gCap[i]) + '" loading="lazy"></button>';
+    }).join("");
+    galleryEl.addEventListener("click", function (e) {
+      var b = e.target.closest(".gallery-item");
+      if (b) openLightbox(gSrc, gCap, +b.dataset.i);
+    });
+  }
 
   /* ---------- Contact form → WhatsApp ---------- */
   var form = document.getElementById("enquiry-form");
