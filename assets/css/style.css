@@ -367,3 +367,55 @@ section { padding-block: 90px; }
   .form-card { padding: 24px 20px; }
   .project-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------- Founder ---------- */
+.founder { display: grid; grid-template-columns: minmax(260px, 400px) 1fr; gap: 64px; align-items: center; }
+.founder-photo { position: relative; }
+.founder-photo img {
+  width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: top;
+  border-radius: 16px; position: relative; z-index: 1;
+}
+.founder-photo::before {
+  content: ""; position: absolute; inset: 18px -18px -18px 18px;
+  border: 2px solid var(--accent); border-radius: 16px;
+}
+.founder-tag {
+  position: absolute; z-index: 2; left: 18px; bottom: 18px;
+  background: var(--surface); border-radius: 12px; padding: 12px 16px;
+  box-shadow: 0 10px 30px rgba(15, 29, 43, .18);
+}
+.founder-tag strong { display: block; font-family: "Jost", sans-serif; font-size: 1.6rem; line-height: 1; color: var(--accent); }
+.founder-tag span { font-size: .8rem; color: var(--muted); }
+.founder-text h2 { font-size: clamp(1.9rem, 3.6vw, 2.7rem); margin-bottom: 6px; }
+.founder-role { color: var(--accent); font-weight: 600; margin-bottom: 22px; }
+.founder-text > p { color: var(--ink-soft); font-size: 1.03rem; margin-bottom: 16px; }
+.founder-quote {
+  border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 24px 0;
+  font-family: "Jost", sans-serif; font-size: 1.2rem; color: var(--ink);
+}
+.creds { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.creds li {
+  display: flex; gap: 12px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+  font-size: .94rem; font-weight: 500;
+}
+.creds .icon { width: 36px; height: 36px; border-radius: 9px; margin: 0; flex: none; }
+.creds .icon svg { width: 18px; height: 18px; }
+
+/* ---------- Stats ---------- */
+.stats { background: var(--dark); color: #fff; padding-block: 56px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; }
+.stat strong {
+  display: block; font-family: "Jost", sans-serif; font-weight: 700;
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem); line-height: 1.1; color: #6cc0ec;
+}
+.stat span { color: rgba(255, 255, 255, .78); font-size: .95rem; }
+
+@media (max-width: 860px) {
+  .founder { grid-template-columns: 1fr; gap: 48px; }
+  .founder-photo { width: calc(100% - 18px); max-width: 340px; margin: 0 auto; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 32px 16px; }
+}
+@media (max-width: 560px) {
+  .creds { grid-template-columns: 1fr; }
+}
